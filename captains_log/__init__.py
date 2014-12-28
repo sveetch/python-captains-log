@@ -1,4 +1,4 @@
 """
 A simple command line utility to fastly write some text about jobs you have done
 """
-__version__ = '0.1.5'
+__version__ = '0.2'
