@@ -21,10 +21,12 @@ setup(
     ],
     install_requires=[
         'click==3.3',
+        'colorama==0.3.2',
+        'peewee==2.4.5',
     ],
     entry_points={
         'console_scripts': [
-            'captains-log = captains_log.console_script:main',
+            'captains-log = captains_log.cli.console_script:cli_frontend',
         ]
     },
     include_package_data=True,
