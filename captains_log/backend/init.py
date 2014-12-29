@@ -10,9 +10,6 @@ def init_database(settings, naive=False):
     ``naive`` argument is used to say if the method should validate that database file exists.
     """
     # Validate than database filepath exists
-    click.echo(settings)
-    click.echo(settings['database_filepath'])
-
     if not naive and not os.path.exists(settings['database_filepath']):
         raise click.UsageError("Unable to find the database, if this is your first \"Captain's log\" usage you must use the 'install' command before")
     

@@ -15,7 +15,9 @@ from captains_log.conf import merge_settings
 @click.pass_context
 def cli_frontend(ctx):#, database):
     """
-    Main command grouper to expose all commands
+    Captain's log is a command line to write simple log messages
+    
+    Take care to quote your texts when they contains spaces. Also, note that some characters like "!" will be processed by Bash as some special characters and results to unwanted behaviors, avoid them if you don't know how to escape them.
     """
     # Resolve database filepath from settings
     
