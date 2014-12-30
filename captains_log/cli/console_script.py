@@ -2,6 +2,13 @@ import os
 import click
 import peewee
 
+## Uncomment this to see executed SQL queries
+#import logging
+#logging.basicConfig(
+    #format='[%(asctime)-15s] [%(name)s] %(levelname)s]: %(message)s',
+    #level=logging.DEBUG
+#)
+
 from captains_log.cli.add_entry import add_entry_command
 from captains_log.cli.remove_entry import remove_entry_command
 from captains_log.cli.entries_history import entries_history_command
@@ -19,9 +26,7 @@ def cli_frontend(ctx):#, database):
     
     Take care to quote your texts when they contains spaces. Also, note that some characters like "!" will be processed by Bash as some special characters and results to unwanted behaviors, avoid them if you don't know how to escape them.
     """
-    # Resolve database filepath from settings
-    
-    # Init the default context
+    # Init the default context that will be passed to commands
     ctx.obj = {
         'settings': merge_settings(**{}),
     }

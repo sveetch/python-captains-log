@@ -28,15 +28,14 @@ def add_entry_command(ctx, category, message):
     
     # Validate that both category and message are not empty
     if not category and not message:
-        raise click.UsageError("Sorry captain, you can't create a log with both empty category and message.")
+        raise click.UsageError("Sorry captain, you cannot create a log with both empty category and message.")
     
-    #click.echo('Adding entry for: {0}'.format(category))
-    #click.echo('    {0}'.format(message))
-    
+    # Get or create category
     category_obj = category
     if category:
         category_obj = get_category_or_create(CaptainsLogDatabase, category)
     
+    # Create entry
     entry_obj = Entry.create(category=category_obj, content=message)
 
     click.echo('Added new entry with ID: {0}'.format(entry_obj.id))

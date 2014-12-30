@@ -8,7 +8,6 @@ from peewee import SqliteDatabase, Model, DateTimeField, CharField, ForeignKeyFi
 # Lazy database connector
 CaptainsLogDatabase = SqliteDatabase(None)
 
-
 class BaseModel(Model):
     """
     Base model to share the same database connector
@@ -36,6 +35,11 @@ class Entry(BaseModel):
     created = DateTimeField(index=True, null=False)
     category = ForeignKeyField(Category, related_name='entries', null=True)
     content = TextField()
+    
+    def category_name(self):
+        if self.category is not None and self.category.id is not None:
+            return self.category.name
+        return None
     
     def save(self, *args, **kwargs):
         self.created = datetime.datetime.now()

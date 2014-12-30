@@ -44,17 +44,17 @@ def install_command(context, force=False):
 @click.pass_context
 def reset_command(context):
     """
-    To restart from a new install
-    
-    Just remove app's directory and relaunch an install
+    To restart with a new install
     """
     settings = context.obj['settings']
     
     click.confirm('Captain, this will reset your install and erase all your logs, are you sure ?', abort=True)
     click.echo("Setting Phasers on kill!")
     
+    # Remove previous config
     if os.path.exists(settings['config_dir']):
         shutil.rmtree(settings['config_dir'])
-
+    
+    # Then redo install
     install_app(settings)
     

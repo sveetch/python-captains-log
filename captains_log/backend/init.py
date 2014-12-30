@@ -1,3 +1,6 @@
+"""
+Initialize database for peewee connector
+"""
 import click, os
 from captains_log.backend.models import CaptainsLogDatabase
 
