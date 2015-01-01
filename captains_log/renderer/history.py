@@ -1,70 +1,63 @@
 # -*- coding: utf-8 -*-
-import click, peewee
-from colorama import Fore, Back, Style
+"""
+Renderers for Entry history browsing
+"""
+import click
 
 from captains_log.backend.models import Category, Entry
+from captains_log.renderer import GroupTitle, ColoredOutputMixin, BaseRenderer, GrouperRenderer
 
-class BasicHistoryRenderer(object):
-    entry_id_template = u"""{0}"""
-    entry_date_template = u"""[{0}]"""
-    entry_category_template = u"""{0}"""
-    entry_message_template = u"""{0}"""
-    entry_datetime_format = "%Y/%m/%d %H:%M"
-    entry_time_format = "%H:%M"
 
-    def __init__(self, queryset):
-        self.queryset = queryset
-        
-    def format_id(self, value):
-        return self.entry_id_template.format(value)
-        
-    def format_created(self, value):
-        created = value.strftime(self.entry_datetime_format)
-        return click.style(
-            self.entry_date_template.format(created),
-            fg='green'
-        )
-        
-    def format_category(self, value):
-        if value:
-            #return self.entry_category_template.format(value)
-            return click.style(
-                self.entry_category_template.format(value),
-                fg='magenta'
-            )
-        
-        return ""
-        
-    def format_message(self, value):
-        return self.entry_message_template.format(value)
-        
-    def assemble_columns(self, entry):
-        return [
-            self.format_id(entry.id),
-            self.format_created(entry.created),
-            self.format_category(entry.category_name()),
-            self.format_message(entry.content)
-        ]
-        
-    def build_row(self, entry):
-        return " ".join(self.assemble_columns(entry))
-        
+class SimpleHistoryRenderer(ColoredOutputMixin, GrouperRenderer):
+    """
+    Simple rendered than simply join entry columns with a space
+    """
+    def render_results(self, results):
+        """
+        Render results section
+        """
+        return "\n".join([self.build_row(entry) for entry in results])
+    
     def render(self):
-        return "\n".join([self.build_row(entry) for entry in self.queryset])
-
+        """
+        Render the whole results
+        """
+        sections = super(SimpleHistoryRenderer, self).render()
+        
+        return "\n".join(sections)
+    
 
 
 try:
     from tabulate import tabulate
 except ImportError:
-    class TabulatedHistoryRenderer(BasicHistoryRenderer):
-        # TODO: raise a warning from __init__
+    class TabulatedHistoryRenderer(GrouperRenderer):
+        # TODO: raise a warning from __init__ to warn if using and tabulate is not installed
+        #       Also put a flag to know that this is a dummy renderer
         pass
 else:
-    class TabulatedHistoryRenderer(BasicHistoryRenderer):
+    class TabulatedHistoryRenderer(ColoredOutputMixin, GrouperRenderer):
+        """
+        Renderer that use ``tabulate`` app to render results in data 
+        tables (with aligned and padded columns values)
+        """
         def build_row(self, entry):
+            """
+            Simply return the values list untouched
+            """
             return self.assemble_columns(entry)
+
+        def render_results(self, results):
+            """
+            Render results section
+            """
+            print "render_results:", len(results)
+            return tabulate([self.build_row(entry) for entry in results], tablefmt="plain")
         
         def render(self):
-            return tabulate([self.build_row(entry) for entry in self.queryset], tablefmt="plain")
-
+            """
+            Render the whole results
+            """
+            sections = super(TabulatedHistoryRenderer, self).render()
+            
+            return "\n".join(sections)

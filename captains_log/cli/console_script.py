@@ -2,12 +2,12 @@ import os
 import click
 import peewee
 
-## Uncomment this to see executed SQL queries
-#import logging
-#logging.basicConfig(
-    #format='[%(asctime)-15s] [%(name)s] %(levelname)s]: %(message)s',
-    #level=logging.DEBUG
-#)
+# Uncomment this to see executed SQL queries
+import logging
+logging.basicConfig(
+    format='[%(asctime)-15s] [%(name)s] %(levelname)s]: %(message)s',
+    level=logging.DEBUG
+)
 
 from captains_log.cli.add_entry import add_entry_command
 from captains_log.cli.remove_entry import remove_entry_command

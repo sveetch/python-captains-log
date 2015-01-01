@@ -2,7 +2,7 @@ import click, peewee
 
 from captains_log.backend.init import init_database
 from captains_log.backend.models import CaptainsLogDatabase, Category, Entry
-from captains_log.renderer.history import BasicHistoryRenderer, TabulatedHistoryRenderer
+from captains_log.renderer.history import SimpleHistoryRenderer, TabulatedHistoryRenderer
 
 
 @click.command()
@@ -13,16 +13,15 @@ from captains_log.renderer.history import BasicHistoryRenderer, TabulatedHistory
 def entries_history_command(ctx):#, year, month, day):
     """
     To display log entries
+    
+    TODO: * Implement date filters when browsing render is finished, think about a default filter on the current day
+          * Option to choose a render
     """
     init_database(ctx.obj['settings'])
     
-    title = 'History'
-    title = "\n".join(["="*len(title), title, "="*len(title)])
-    click.echo(title)
-    
     queryset = Entry.select(Entry, Category).join(Category, peewee.JOIN_LEFT_OUTER).order_by(Entry.created.asc()).aggregate_rows()
     
-    #click.echo(BasicHistoryRenderer(queryset).render())
+    #click.echo(SimpleHistoryRenderer(queryset).render())
     
     click.echo(TabulatedHistoryRenderer(queryset).render())
         
