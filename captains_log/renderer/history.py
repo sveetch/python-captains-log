@@ -51,8 +51,7 @@ else:
             """
             Render results section
             """
-            print "render_results:", len(results)
-            return tabulate([self.build_row(entry) for entry in results], tablefmt="plain")
+            return tabulate([self.build_row(entry) for entry in results], tablefmt="plain")+"\n"
         
         def render(self):
             """
@@ -61,3 +60,44 @@ else:
             sections = super(TabulatedHistoryRenderer, self).render()
             
             return "\n".join(sections)
+
+
+class ColumnedHistoryRenderer(ColoredOutputMixin, GrouperRenderer):
+    """
+    Try to implement a better tabulated render than the one with 'tabulate' 
+    app that can't manage a title on a whole line
+    
+    In fact we are just padding id and category name, date does not change 
+    with the default date format and we don't care about message because 
+    it's the last column
+    """
+    def format_id(self, value):
+        return super(ColumnedHistoryRenderer, self).format_id(value).ljust(3)
+    
+    def format_category(self, value):
+        if value is None:
+            value = ""
+        
+        value = value.ljust(len(self.higher_category_name))
+        if value:
+            value = click.style(
+                super(ColoredOutputMixin, self).format_category(value),
+                fg='magenta'
+            )
+            
+        return value
+    
+    def render_results(self, results):
+        """
+        Render results section
+        """
+        return ("\n".join([self.build_row(entry) for entry in results]))+"\n"
+    
+    def render(self):
+        """
+        Render the whole results
+        """
+        sections = super(ColumnedHistoryRenderer, self).render()
+        
+        return "\n".join(sections)
+

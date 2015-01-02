@@ -113,10 +113,10 @@ class BaseRenderer(object):
         """
         results = self.pre_process()
         
-        self.starting_entry = results[0].created
-        self.ending_entry = results[-1].created
+        self.starting_entry = results[0]
+        self.ending_entry = results[-1]
         
-        self.not_the_same_day_mode = (self.starting_entry != self.ending_entry)
+        self.not_the_same_day_mode = (self.starting_entry.created.date() != self.ending_entry.created.date())
         
         return results
 
@@ -131,11 +131,12 @@ class GrouperRenderer(BaseRenderer):
     to suit to their needs.
     """
     group_month_format = "%A, %d %B %Y"
+    categories = []
         
-    #def format_created(self, value):
-        #"""Format Entry created datetime"""
-        #created = value.strftime(self.entry_time_format)
-        #return self.entry_date_template.format(created)
+    def format_created(self, value):
+        """Format Entry created datetime"""
+        created = value.strftime(self.entry_time_format)
+        return self.entry_date_template.format(created)
     
     def regroup(self, entries):
         """
@@ -146,11 +147,13 @@ class GrouperRenderer(BaseRenderer):
         # - Put a title for each group
         """
         sections = []
+        self.categories = set([])
         if self.not_the_same_day_mode:
             i = 0
             current_day = None
             current_group = None
             for item in entries:
+                self.categories.add(item.category_name())
                 # Reset counter if we are in another day than saved current date
                 if current_day and item.created.date() != current_day:
                     i = 0
@@ -171,10 +174,12 @@ class GrouperRenderer(BaseRenderer):
             # Push remaining last group as a section
             if current_group:
                 sections.append(current_group)
-                
+            
+            # Find the most bigger category name length
+            self.higher_category_name = max([k for k in self.categories if k], key=len)
             return sections
         
-        return [GroupTitle(self.starting_entry.strftime(self.group_month_format)), entries]
+        return [GroupTitle(self.starting_entry.created.strftime(self.group_month_format)), entries]
         
     def render_title(self, title):
         """
@@ -202,7 +207,5 @@ class GrouperRenderer(BaseRenderer):
                 sections.append(self.render_title(group))
             else:
                 sections.append(self.render_results(group))
-                # Little trick to add a line separation between a group and the following title
-                sections.append("")
                 
         return sections

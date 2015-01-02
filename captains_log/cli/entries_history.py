@@ -2,7 +2,7 @@ import click, peewee
 
 from captains_log.backend.init import init_database
 from captains_log.backend.models import CaptainsLogDatabase, Category, Entry
-from captains_log.renderer.history import SimpleHistoryRenderer, TabulatedHistoryRenderer
+from captains_log.renderer.history import SimpleHistoryRenderer, TabulatedHistoryRenderer, ColumnedHistoryRenderer
 
 
 @click.command()
@@ -23,5 +23,7 @@ def entries_history_command(ctx):#, year, month, day):
     
     #click.echo(SimpleHistoryRenderer(queryset).render())
     
-    click.echo(TabulatedHistoryRenderer(queryset).render())
+    #click.echo(TabulatedHistoryRenderer(queryset).render())
+    
+    click.echo(ColumnedHistoryRenderer(queryset).render())
         

@@ -9,6 +9,14 @@ It's a simple method for developers (that allready have a terminal session opene
 
 Warning, this software should contains some *StarTrek* quotes and vocabulary.
 
+TODO
+====
+
+* Finish history renderer;
+* Implement history filters;
+* Implement a config file to change some behaviors and options;
+* Finish the README;
+
 Proposal
 ========
 
