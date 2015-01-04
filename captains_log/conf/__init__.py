@@ -8,6 +8,7 @@ def merge_settings(**kwargs):
     d = {
         'config_dir': defaults.APPCONFIG_LOCATION,
         'database_name': defaults.DATABASE_LOCATION,
+        'language_code': defaults.LANGUAGE_CODE,
     }
     d.update(kwargs)
     

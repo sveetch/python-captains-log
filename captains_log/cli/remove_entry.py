@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import click, peewee
 
 from captains_log.backend.init import init_database
@@ -20,12 +21,14 @@ def validate_entry_id(ctx, param, value):
         else:
             return value
 
-@click.command()
+@click.command(short_help='Remove an existing log entry')
 @click.argument('entry_id', callback=validate_entry_id, required=True)
 @click.pass_context
 def remove_entry_command(ctx, entry_id):
     """
-    To remove an existing log entry from its given ID or the last entry in date if given ID is a string equal to "last"
+    Remove an existing log entry
+    
+    Either from its given ID or the last entry in date if given ID is a string equal to "last"
     """
     init_database(ctx.obj['settings'])
     

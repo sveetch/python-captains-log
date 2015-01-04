@@ -132,12 +132,12 @@ print
 
 # Create datetime hour ranges for two years
 # First year
-start = datetime.datetime(2013, 12, 5, 12, 30)
-end = datetime.datetime(2014, 3, 1, 13, 30)
+start = datetime.datetime(2014, 3, 5, 12, 30)
+end = datetime.datetime(2014, 7, 10, 13, 30)
 datetimes_choices = arrow.Arrow.span_range('hour', start, end)
 # Second year
-start = datetime.datetime(2014, 11, 10, 10, 5)
-end = datetime.datetime(2014, 12, 28, 18, 0)
+start = datetime.datetime(2014, 12, 10, 10, 5)
+end = datetime.datetime(2015, 3, 2, 18, 0)
 datetimes_choices = datetimes_choices + arrow.Arrow.span_range('hour', start, end)
 
 
@@ -162,7 +162,7 @@ print "Filtered results:", len(datetimes_choices)
 
 
 # Selected X random datetime items
-ENTRY_ITEMS_MAX = 200
+ENTRY_ITEMS_MAX = 400
 selected_datetimes = []
 while len(selected_datetimes)<ENTRY_ITEMS_MAX:
     # Choose a random item

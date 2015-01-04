@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import click, peewee
 
 from captains_log.backend.init import init_database
@@ -22,7 +23,7 @@ def get_category_or_create(db, name):
 @click.pass_context
 def add_entry_command(ctx, category, message):
     """
-    To add a new log entry
+    Add a new log entry
     """
     init_database(ctx.obj['settings'])
     

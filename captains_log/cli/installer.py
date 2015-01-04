@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os, shutil
 import click
 
@@ -10,7 +11,7 @@ from captains_log.backend.models import CaptainsLogDatabase, Category, Entry
 @click.pass_context
 def install_command(context, force=False):
     """
-    To install the required script config
+    Install the required config
     """
     settings = context.obj['settings']
     
@@ -28,7 +29,7 @@ def install_command(context, force=False):
 @click.pass_context
 def reset_command(context, force):
     """
-    To restart with a new install
+    Restart with a new install
     """
     settings = context.obj['settings']
     

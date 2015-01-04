@@ -12,15 +12,13 @@ Warning, this software should contains some *StarTrek* quotes and vocabulary.
 TODO
 ====
 
-* Finish history renderer;
-* Implement history filters;
 * Implement a config file to change some behaviors and options;
 * Finish the README;
 
 Proposal
 ========
 
-*(This is the draft that leaded to development, the final production should diverge a little bit)*
+*(This is the draft that leaded to development, the final production should diverge a little bit, real documentation will come soon)*
 
 What
 ----
@@ -46,6 +44,26 @@ Generally, developers allways have an opened shell session to work, so a command
 How
 ---
 
+Install
+*******
+
+The app need a minimal dedicated config stuff to be installed before working, like it's database file and config file.
+
+So before using the app after installing its package, user have to use the following command: ::
+
+    captains-log install
+
+This will automatically install all needed stuff in the dedicated app directory.
+
+Reset
+*****
+
+Sometime you will need to *reset* your install, so use this : ::
+
+    captains-log reset
+
+This will **remove all content** (database, config, etc..) in the app dedicated directory and re-launch the install process. Take care to backup your config before if you don't want to lose them, the app doesn't care about this for you.
+    
 Adding entry
 ************
 
@@ -60,7 +78,9 @@ This have to be really fast and easy to use, so at least we should have somethin
     
 The first line open a log for the ``parrot`` category with the message ``Did something``. 
 
-**captains-log** will write it to a log file or/and a sqlite3 backend in a shared directory (in the user's home) so we can use it from anywhere in the user's space.
+**captains-log** will write it to a sqlite3 backend in a shared directory (in the user's home) so we can use it from anywhere in the user's space.
+
+If category's name does not exist yet, a new category will be created, else if exists the category object will simply be used. Category's name is case sensitive, so using ``Mycat`` then using ``mycat`` will results to create two distinct categories, user have to ensure to rightly type the category's name if it don't want multiple categories for a similar name.
 
 **Command line details :** ``captains-log add [-c category] message``
 
@@ -89,7 +109,7 @@ History
 
 Also we need an history view to be able to see history at anytime without to go to look in the logs, so something like that: ::
 
-    captains-log log
+    captains-log history
 
 Think about to limit the history at last to the current month, to avoid thousand of entries. Then so there should be an argument to view other months.
 
@@ -133,7 +153,22 @@ Then it could be nice to have an history view with entries group by days like : 
 
 **Command line details :** ``captains-log history``
 
-(Filtering option arguments have to be studied)
+And some filter options for results: ::
+
+    # every entries of the current year
+    captains-log history year
+    
+    # every entries of the current month
+    captains-log history month
+    
+    # every entries of the current week
+    captains-log history week
+    
+    # every entries of the current day
+    captains-log history day
+    
+    # every entries that contains "start"
+    captains-log history -s "start"
 
 Aliases
 *******

@@ -52,7 +52,7 @@ class BaseRenderer(object):
     Basic rendered, the render method does not return a string, but the 
     processed results with their formatted values
     """
-    entry_id_template = u"""{0}"""
+    entry_id_template = u"""{0})"""
     entry_date_template = u"""[{0}]"""
     entry_category_template = u"""{0}"""
     entry_message_template = u"""{0}"""
@@ -103,9 +103,7 @@ class BaseRenderer(object):
         """
         Pre processing results and return them as a list
         """
-        entries = list(self.queryset)
-        
-        return entries
+        return list(self.queryset)
     
     def render(self):
         """
@@ -133,6 +131,16 @@ class GrouperRenderer(BaseRenderer):
     group_month_format = "%A, %d %B %Y"
     categories = []
         
+    def format_group_name(self, value):
+        """
+        Format group name
+        """
+        # strftime return a string, so decode it to unicode
+        output = value.strftime(self.group_month_format).split()
+        # Correctly capitalize each word in the date name
+        output = " ".join([v.capitalize() for v in output])
+        return output.decode('UTF-8')
+        
     def format_created(self, value):
         """Format Entry created datetime"""
         created = value.strftime(self.entry_time_format)
@@ -140,18 +148,17 @@ class GrouperRenderer(BaseRenderer):
     
     def regroup(self, entries):
         """
-        Regroup datas
-        # - Execute the query so we can pre-process results before starting to render it;
-        # - Divide results in days (should be easy to cut because results are date ordere);
-        # - Regroup by days or month ?
-        # - Put a title for each group
+        Regroup datas that is much more a splitting process on results
         """
         sections = []
         self.categories = set([])
+        
+        # When we have multiple different days from entries we have to apply regrouping
         if self.not_the_same_day_mode:
             i = 0
             current_day = None
             current_group = None
+            # Walk on entries and split them on the day date
             for item in entries:
                 self.categories.add(item.category_name())
                 # Reset counter if we are in another day than saved current date
@@ -166,7 +173,7 @@ class GrouperRenderer(BaseRenderer):
                         sections.append(current_group)
                     # Open new group with its title
                     current_group = []
-                    sections.append(GroupTitle(item.created.strftime(self.group_month_format)))
+                    sections.append(GroupTitle(self.format_group_name(item.created)))
                 # Store item in the current group
                 current_group.append(item)
                 i += 1
@@ -174,19 +181,33 @@ class GrouperRenderer(BaseRenderer):
             # Push remaining last group as a section
             if current_group:
                 sections.append(current_group)
-            
-            # Find the most bigger category name length
-            self.higher_category_name = max([k for k in self.categories if k], key=len)
-            return sections
+            return self.post_regroup_process(sections)
         
-        return [GroupTitle(self.starting_entry.created.strftime(self.group_month_format)), entries]
+        # When we only have one day from all entries, dont need to regroup
+        for item in entries:
+            self.categories.add(item.category_name())
+        sections = [GroupTitle(self.format_group_name(self.starting_entry.created)), entries]
+        return self.post_ungrouped_process(sections)
+        
+    def post_regroup_process(self, sections):
+        """
+        To do some optionnal post processing when regrouping into sections
+        """
+        return sections
+        
+    def post_ungrouped_process(self, sections):
+        """
+        To do some optionnal post processing when there is no regrouping 
+        to apply
+        """
+        return sections
         
     def render_title(self, title):
         """
         Render a title section
         """
         title = unicode(title)
-        return "\n".join(["="*len(title), title, "="*len(title)])
+        return ("\n".join([title, "="*len(title)]))+"\n"
         
     def render_results(self, results):
         """

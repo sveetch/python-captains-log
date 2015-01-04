@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import click
 import peewee
@@ -16,6 +17,8 @@ from captains_log.cli.installer import install_command, reset_command
 
 from captains_log.conf import merge_settings
 
+import locale
+
 @click.group()
 #@click.argument('location', default=DEFAULT_DIR_LOCATION, required=True)
 #@click.option('--database', '-d', default='captains-log.sqlite3', help='Path to the sqlite3 database to use')
@@ -30,6 +33,9 @@ def cli_frontend(ctx):#, database):
     ctx.obj = {
         'settings': merge_settings(**{}),
     }
+    
+    # Active system locale so we have dates in the right user language
+    locale.setlocale(locale.LC_ALL, ctx.obj['settings']['language_code'])
 
 
 # Attach commands methods to the main grouper

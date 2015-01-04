@@ -71,14 +71,33 @@ class ColumnedHistoryRenderer(ColoredOutputMixin, GrouperRenderer):
     with the default date format and we don't care about message because 
     it's the last column
     """
+    def post_regroup_process(self, sections):
+        """
+        Find the most largest category name used from all entries
+        """
+        self.largest_category_name = max([k for k in self.categories if k], key=len)
+        # Calculate the most largest ID representation when formatted using the 
+        # last entry (that should allways have the higher id)
+        self.largest_entry_id = len(super(ColumnedHistoryRenderer, self).format_id(self.ending_entry.id))
+        
+        return sections
+    
+    def post_ungrouped_process(self, sections):
+        """
+        Within ``ColumnedHistoryRenderer`` this is just a mirror to 
+        ``post_regroup_process`` because the only thing it do is to find the 
+        most largest category name
+        """
+        return self.post_regroup_process(sections)
+    
     def format_id(self, value):
-        return super(ColumnedHistoryRenderer, self).format_id(value).ljust(3)
+        return super(ColumnedHistoryRenderer, self).format_id(value).ljust(self.largest_entry_id)
     
     def format_category(self, value):
         if value is None:
             value = ""
         
-        value = value.ljust(len(self.higher_category_name))
+        value = value.ljust(len(self.largest_category_name))
         if value:
             value = click.style(
                 super(ColoredOutputMixin, self).format_category(value),
