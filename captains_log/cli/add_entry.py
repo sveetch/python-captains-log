@@ -25,7 +25,7 @@ def add_entry_command(ctx, category, message):
     """
     Add a new log entry
     """
-    init_database(ctx.obj['settings'])
+    init_database()
     
     # Validate that both category and message are not empty
     if not category and not message:

@@ -4,7 +4,9 @@ Initialize database for peewee connector
 import click, os
 from captains_log.backend.models import CaptainsLogDatabase
 
-def init_database(settings, naive=False):
+from captains_log.conf import settings
+
+def init_database(naive=False):
     """
     Given the user settings, initialize the database
     
@@ -13,10 +15,15 @@ def init_database(settings, naive=False):
     ``naive`` argument is used to say if the method should validate that database file exists.
     """
     # Validate than database filepath exists
-    if not naive and not os.path.exists(settings['database_filepath']):
-        raise click.UsageError("Unable to find the database, if this is your first \"Captain's log\" usage you must use the 'install' command before")
+    if not naive and not os.path.exists(settings.DATABASE_FILEPATH):
+        raise click.UsageError(
+            "\n\n".join([
+                "Unable to find the database, from: {0}".format(settings.DATABASE_FILEPATH),
+                "If this is your first \"Captain's log\" usage you must use the 'install' command before."
+            ])
+        )
     
     # Gives database access/config to peewee
-    CaptainsLogDatabase.init(settings['database_filepath'])
+    CaptainsLogDatabase.init(settings.DATABASE_FILEPATH)
         
     return CaptainsLogDatabase

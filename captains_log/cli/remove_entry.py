@@ -30,7 +30,7 @@ def remove_entry_command(ctx, entry_id):
     
     Either from its given ID or the last entry in date if given ID is a string equal to "last"
     """
-    init_database(ctx.obj['settings'])
+    init_database()
     
     click.echo('Remove entry id: {0}'.format(entry_id))
     if isinstance(entry_id, basestring):

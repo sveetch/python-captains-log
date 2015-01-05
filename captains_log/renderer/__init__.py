@@ -6,6 +6,7 @@ import click
 
 from captains_log.backend.models import Category, Entry
 
+from captains_log.conf import settings
 
 class GroupTitle(object):
     """
@@ -23,6 +24,17 @@ class GroupTitle(object):
     def __str__(self):
         return self.title
 
+
+class RendererException(Exception):
+    """Exception raised for errors occurring within a renderer
+
+    Attributes:
+        msg  -- explanation of the error
+    """
+    def __init__(self, msg):
+        self.msg = msg
+    def __str__(self):
+        return repr(self.msg)
 
 
 class ColoredOutputMixin(object):
@@ -46,41 +58,38 @@ class ColoredOutputMixin(object):
         return ""
 
 
-
 class BaseRenderer(object):
     """
     Basic rendered, the render method does not return a string, but the 
     processed results with their formatted values
+    
+    Note that renderer does not support queryset that return an empty list, 
+    this will raise an RendererException.
     """
-    entry_id_template = u"""{0})"""
-    entry_date_template = u"""[{0}]"""
-    entry_category_template = u"""{0}"""
-    entry_message_template = u"""{0}"""
-    entry_datetime_format = "%Y/%m/%d %H:%M"
-    entry_time_format = "%H:%M"
-
+    not_the_same_day_mode = None
+    
     def __init__(self, queryset):
         self.queryset = queryset
         
     def format_id(self, value):
         """Format Entry id"""
-        return self.entry_id_template.format(value)
+        return settings.ENTRY_ID_TEMPLATE.format(value)
         
     def format_created(self, value):
         """Format Entry created datetime"""
-        created = value.strftime(self.entry_datetime_format)
-        return self.entry_date_template.format(created)
+        created = value.strftime(settings.ENTRY_DATETIME_FORMAT)
+        return settings.ENTRY_DATE_TEMPLATE.format(created)
         
     def format_category(self, value):
         """Format Entry category object"""
         if value:
-            return self.entry_category_template.format(value)
+            return settings.ENTRY_CATEGORY_TEMPLATE.format(value)
         
         return ""
         
     def format_message(self, value):
         """Format Entry message"""
-        return self.entry_message_template.format(value)
+        return settings.ENTRY_MESSAGE_TEMPLATE.format(value)
         
     def assemble_columns(self, entry):
         """Assemble formatted Entry value as columns"""
@@ -110,6 +119,8 @@ class BaseRenderer(object):
         Render the whole results
         """
         results = self.pre_process()
+        if len(results) == 0:
+            raise RendererException("There is no entries to render")
         
         self.starting_entry = results[0]
         self.ending_entry = results[-1]
@@ -128,7 +139,6 @@ class GrouperRenderer(BaseRenderer):
     sections then return a list of section list that final renderer can reformat 
     to suit to their needs.
     """
-    group_month_format = "%A, %d %B %Y"
     categories = []
         
     def format_group_name(self, value):
@@ -136,15 +146,15 @@ class GrouperRenderer(BaseRenderer):
         Format group name
         """
         # strftime return a string, so decode it to unicode
-        output = value.strftime(self.group_month_format).split()
+        output = value.strftime(settings.GROUP_MONTH_FORMAT).split()
         # Correctly capitalize each word in the date name
         output = " ".join([v.capitalize() for v in output])
         return output.decode('UTF-8')
         
     def format_created(self, value):
         """Format Entry created datetime"""
-        created = value.strftime(self.entry_time_format)
-        return self.entry_date_template.format(created)
+        created = value.strftime(settings.ENTRY_TIME_FORMAT)
+        return settings.ENTRY_DATE_TEMPLATE.format(created)
     
     def regroup(self, entries):
         """
