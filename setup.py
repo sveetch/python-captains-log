@@ -23,7 +23,6 @@ setup(
         'click==3.3',
         'colorama==0.3.2',
         'peewee==2.4.5',
-        #'tabulate==0.7.3',
     ],
     entry_points={
         'console_scripts': [

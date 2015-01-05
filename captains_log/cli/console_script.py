@@ -15,7 +15,7 @@ from captains_log.conf import settings
 
 @click.group()
 #@click.argument('location', default=DEFAULT_DIR_LOCATION, required=True)
-@click.option('--config-dir', default=None, help='Path to the directory where the app config resides')
+@click.option('--config-dir', default=None, metavar='PATH', help='Path to the directory where the app config resides')
 #@click.option('--database', '-d', default='captains-log.sqlite3', help='Path to the sqlite3 database to use')
 @click.pass_context
 def cli_frontend(ctx, config_dir):#, database):
