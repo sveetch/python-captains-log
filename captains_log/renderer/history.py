@@ -75,7 +75,10 @@ class ColumnedHistoryRenderer(ColoredOutputMixin, GrouperRenderer):
         """
         Find the most largest category name used from all entries
         """
-        self.largest_category_name = max([k for k in self.categories if k], key=len)
+        try:
+            self.largest_category_name = max([k for k in self.categories if k], key=len)
+        except ValueError:
+            self.largest_category_name = ""
         # Calculate the most largest ID representation when formatted using the 
         # last entry (that should allways have the higher id)
         self.largest_entry_id = len(super(ColumnedHistoryRenderer, self).format_id(self.ending_entry.id))
