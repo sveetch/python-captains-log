@@ -60,7 +60,7 @@ from captains_log.cli.add_entry import add_entry_command
 from captains_log.cli.remove_entry import remove_entry_command
 from captains_log.cli.entries_history import entries_history_command
 from captains_log.cli.installer import install_command, reset_command
-from captains_log.cli.devdebug import foo_command
+#from captains_log.cli.devdebug import foo_command
 
 # Attach commands methods to the main grouper
 cli_frontend.add_command(add_entry_command, name="add")
