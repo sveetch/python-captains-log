@@ -16,7 +16,7 @@ from captains_log.conf.install import install_app
 from captains_log.backend.init import init_database
 from captains_log.backend.models import CaptainsLogDatabase, Category, Entry
 
-from captains_log.conf import merge_settings
+from captains_log.conf import settings
 
 DUMMY_CATEGORIES = [
     u"General",
@@ -106,18 +106,15 @@ TRIBUNE_TITLES = (
 
 
 
-# Boot settings
-settings = merge_settings(**{})
-    
 # Remove previous config
-if os.path.exists(settings['config_dir']):
-    shutil.rmtree(settings['config_dir'])
+if os.path.exists(settings.CONFIG_DIR):
+    shutil.rmtree(settings.CONFIG_DIR)
 
 # Then redo install
-install_app(settings)
+install_app()
 
 # Connect database again
-init_database(settings)
+init_database()
 print 
 
 # Create categories
